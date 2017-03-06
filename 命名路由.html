@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>命名路由</title>
+    <style>
+        .title-nav {
+            text-decoration: none;
+            color: blue;
+            padding: 5px 10px;
+            background-color: #eee;
+        }
+
+        .router-link-active {
+            color: red;
+        }
+    </style>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Named Routes</h1>
+        <p>Current route name: {{ $route.name }}</p>
+        <ul>
+            <!--<li><router-link to="/">Home</router-link></li>
+            <li><router-link to="/foo">Foo</router-link></li>
+            <li><router-link to="/bar/test">Bar</router-link></li>-->
+
+            <!--要链接到一个命名路由，可以给 router-link 的 to 属性传一个对象-->
+            <li><router-link :to="{name: 'home'}">Home</router-link></li>
+            <li><router-link :to="{name: 'foo'}">Foo</router-link></li>
+            <li><router-link :to="{name: 'bar', params: {id: 'test'}}">Bar</router-link></li>
+        </ul>
+        <router-view class="view"></router-view>
+    </div>
+    <script>
+        const Home = { template: '<div>This is Home</div>' }
+        const Foo = { template: '<div>This is Foo</div>' }
+        const Bar = { template: '<div>This is Bar {{ $route.params.id }}</div>' }
+
+        /*有时候，通过一个名称来标识一个路由显得更方便一些，特别是在链接一个路由，或者是执行一些跳转的时候。
+        你可以在创建 Router 实例的时候，在 routes 配置中给某个路由设置名称。*/
+        const router = new VueRouter({
+            routes: [
+                { path: '/', name: 'home', component: Home },
+                { path: '/foo', name: 'foo', component: Foo },
+                { path: '/bar/:id', name: 'bar', component: Bar }
+            ]
+        })
+
+        new Vue({
+            router
+        }).$mount('#app')
+    </script>
+</body>
+</html>

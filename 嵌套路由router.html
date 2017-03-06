@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>嵌套路由</title>
+    <style>
+        .title-nav {
+            text-decoration: none;
+            color: blue;
+            padding: 5px 10px;
+            background-color: #eee;
+        }
+
+        .router-link-active {
+            color: red;
+        }
+    </style>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="app">
+        <p>
+            <router-link class="title-nav" to="/user/foo">user/foo</router-link>
+            <router-link class="title-nav" to="/user/foo/profile">user/foo/profile</router-link>
+            <router-link class="title-nav" to="/user/foo/posts">user/foo/posts</router-link>
+        </p>
+        <!--这里的 <router-view> 是最顶层的出口，渲染最高级路由匹配到的组件-->
+        <router-view></router-view>
+    </div>
+
+    <script>
+        // 0. If using a module system, call Vue.use(VueRouter)
+
+        // 1.定义路由组件
+        // 一个被渲染组件同样可以包含自己的嵌套 <router-view>
+        const User = {
+            template: `
+                <div class="user">
+                    <h2>User {{$route.params.id}}</h2>
+                    <router-view></router-view>
+                </div>
+            `
+        };
+        const UserHome = {
+            template: '<div>Home</div>'
+        };
+        const UserProfile = {
+            template: '<div>Profile</div>'
+        };
+        const UserPosts = {
+            template: '<div>Posts</div>'
+        };
+
+        // 2.定义路由
+        const routes = [
+            {
+                path: '/user/:id',
+                component: User,
+                children: [ // 要在嵌套的出口中渲染组件，需要在 VueRouter 的参数中使用 children 配置
+                    /*{path: '', component: UserHome},*/
+                    {
+                        // 当/user/:id/profile匹配成功，UserProfile组件会被渲染在User的<router-view>中
+                        path: 'profile',
+                        component: UserProfile
+                    },
+                    {
+                        // 当/user/:id/posts匹配成功，UserPosts组件会被渲染在User的<router-view>中
+                        path: 'posts',
+                        component: UserPosts
+                    }
+                ]
+            }
+        ];
+        // 要注意，以 / 开头的嵌套路径会被当作根路径。 这让你充分的使用嵌套组件而无须设置嵌套的路径。
+
+        // 3.创建router实例，然后传入'routes'配置
+        const router = new VueRouter({
+            routes //(缩写)相当于routes: routes
+        });
+
+        // 4.创建和挂载根实例
+        // 记得要通过router配置参数注入路由
+        // 从而让整个应用都具有路由
+        var app = new Vue({
+            router
+        }).$mount('#app');
+    </script>
+</body>
+</html>
